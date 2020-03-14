@@ -16,6 +16,13 @@ class UserController {
 
     async getById(req, res) {
 
+        const { id } = req.params;
+        const user = await User.findOne({
+            where: { id },
+            attributes: ["id", "name", "email", "provider", "updated_at", "created_at"]
+        });
+
+        return res.json(user);
     }
 
     async save(req, res) {
