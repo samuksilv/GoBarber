@@ -10,9 +10,9 @@ class User extends Model {
             password: Sequelize.VIRTUAL,
             provider: Sequelize.BOOLEAN,
         },
-        {
-            sequelize
-        });
+            {
+                sequelize
+            });
 
         this.addHook('beforeSave', async (user) => {
             if (user.password)
@@ -20,8 +20,11 @@ class User extends Model {
 
             return this;
         });
-
     }
+
+    async checkPassword(password){
+        return bcrypt.compare(password, this.password_hash);
+    };
 
 }
 
