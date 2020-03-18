@@ -1,7 +1,6 @@
 import { Router } from "express";
 import User from '../models/user';
-
-const routes = new Router();
+import AuthMiddleware from '../middlewares/AuthMiddleware';
 
 class UserController {
 
@@ -42,19 +41,29 @@ class UserController {
 
     async update(req, res) {
 
+        const { userId: id } = req;
+        const { email, name, password, provider } = req.body;
+
+        const user = await User.findOne({ where: { id } });
+
+        const { updatedAt, createdAt } = await user.update({ email, name, password, provider });
+
+        return res.status(200).json({ id, email, name, provider, updatedAt, createdAt });
     }
 
-    delete(req, res) {
+    async delete(req, res) {
 
     }
 };
 
-export const controller = new UserController();
+const controller = new UserController();
+const routes = new Router();
 
 routes.get("/user", controller.getAll);
 routes.get("/user/:id", controller.getById);
 routes.post("/user", controller.save);
-routes.put("/user/:id", controller.update);
+
+routes.put("/user", AuthMiddleware, controller.update);
 routes.delete("/user/:id", controller.delete);
 
 export default routes;

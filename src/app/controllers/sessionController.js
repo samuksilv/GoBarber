@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import {Router} from "express";
 import User from '../models/user';
 import authConfig from '../../config/auth';
 
@@ -19,27 +20,27 @@ class SessionController {
         const { id, name } = user;
 
         const token = jwt.sign({
-            id,
-            name,
-            email,
+            id
         },
         authConfig.secret,
         {
             expiresIn: authConfig.expireIn
         });
 
-        return {
+        return res.status(201).json({
             user: {
                 id,
                 name,
                 email,
             },
             token
-        }
+        });
     }
 }
 
-export const controller = new SessionController();
+const routes = new Router();
+
+const controller = new SessionController();
 
 routes.post("/login", controller.login);
 
